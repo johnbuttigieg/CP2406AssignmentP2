@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 public class RenderScreen extends JPanel {
 
 
-        public static Color black = new Color(350000);
+    public static Color black = new Color(350000);
 
 
     @Override
