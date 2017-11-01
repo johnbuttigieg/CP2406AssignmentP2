@@ -15,6 +15,7 @@ public class Window extends JPanel implements Runnable {
     private Player p;
     private ArrayList<Player> lightCycle;
     private int xLocation = 20, yLocation = 20;
+    private int playerSize = 5;
 
 
     public Window() {
@@ -40,18 +41,32 @@ public class Window extends JPanel implements Runnable {
 
 // inbuilt into JPanel to change graphics of the JPANEL
     public void paint(Graphics g) {
+        g.setColor(Color.black);
         for (int i = 0; i < WIDTH / 20; i++) {
-            g.drawLine(i * 20, 0 , i * 20, HEIGHT);
+            g.drawLine(i * 20, 0, i * 20, HEIGHT);
         }
 
-        for (int  i = 0; i < HEIGHT / 20; i++) {
+        for (int i = 0; i < HEIGHT / 20; i++) {
             g.drawLine(0, i * 20, WIDTH, i * 20);
         }
+
+        for (int i = 0; i < lightCycle.size(); i++)
+        {
+            lightCycle.get(i).draw(g);
+        }
+
     }
+
+
 
 
     public void update() {
         System.out.println("Testing");
+        if(lightCycle.size() == 0) {
+            p = new Player(xLocation, yLocation, 20);
+            lightCycle.add(p);
+
+        }
     }
 
     public void run() {
