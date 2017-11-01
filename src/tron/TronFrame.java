@@ -28,8 +28,6 @@ public class TronFrame extends JFrame {
         pack();
 
 
-
-
     }
 
 
