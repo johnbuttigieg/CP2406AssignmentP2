@@ -2,6 +2,8 @@ package tron;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class Window extends JPanel implements Runnable {
@@ -17,6 +19,7 @@ public class Window extends JPanel implements Runnable {
     private int xLocation = 20, yLocation = 20;
     private int playerSize = 1;
 
+    private KeyInput key;
 
     private boolean right = true, left = false, up = false, down = false;
 
@@ -25,6 +28,10 @@ public class Window extends JPanel implements Runnable {
 
     public Window() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setFocusable(true);
+        key = new KeyInput();
+        addKeyListener(key);
+
         lightCycle = new ArrayList<Player>();
 
         //leads to start() method to begin the thread to begin the game
@@ -104,15 +111,55 @@ public class Window extends JPanel implements Runnable {
             repaint();
             update();
     }
-
-
-
-
-
-
-
     }
 
+
+    private class KeyInput implements KeyListener {
+
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+
+
+                if (key == KeyEvent.VK_RIGHT && !left) {
+                    up = false;
+                    down = false;
+                    right = true;
+                }
+
+
+            if (key == KeyEvent.VK_LEFT && !right) {
+                up = false;
+                down = false;
+                left = true;
+            }
+
+            if (key == KeyEvent.VK_UP && !down) {
+                up = true;
+                right = false;
+                left = false;
+
+            }
+
+            if (key == KeyEvent.VK_DOWN && !up) {
+                down = true;
+                right = false;
+                left = false;
+
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
+    }
 
 
 
