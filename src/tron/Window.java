@@ -14,10 +14,17 @@ public class Window extends JPanel implements Runnable {
 
 
     public static final int WIDTH = 500, HEIGHT = 500;
+    private int tileSize = 20;
     private Player p;
     private ArrayList<Player> lightCycle;
-    private int xLocation = 20, yLocation = 20;
-    private int playerSize = 1;
+    private int xLocation = 10, yLocation = 10;
+    private int playerSize = 100000;
+
+    private int tileNumX = 20;
+    private int tileNumY = 20;
+    private int currentX = 0;
+    private int currentY = 0;
+    private int tiles[];
 
     private KeyInput key;
 
@@ -34,9 +41,29 @@ public class Window extends JPanel implements Runnable {
 
         lightCycle = new ArrayList<Player>();
 
+        this.tiles = new int[this.tileNumX * this.tileNumY];
+
         //leads to start() method to begin the thread to begin the game
         start();
 
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @return int
+     */
+    public int getTile(int x, int y) {
+        return this.tiles[(y * x) + x];
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param value
+     */
+    public void setTile(int x, int y, int value) {
+        this.tiles[(y * x) + x] = value;
     }
 
 
@@ -57,12 +84,12 @@ public class Window extends JPanel implements Runnable {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         g.setColor(Color.black);
-        for (int i = 0; i < WIDTH / 20; i++) {
-            g.drawLine(i * 20, 0, i * 20, HEIGHT);
+        for (int i = 0; i < WIDTH / this.tileSize; i++) {
+            g.drawLine(i * this.tileSize, 0, i * this.tileSize, HEIGHT);
         }
 
-        for (int i = 0; i < HEIGHT / 20; i++) {
-            g.drawLine(0, i * 20, WIDTH, i * 20);
+        for (int i = 0; i < HEIGHT / this.tileSize; i++) {
+            g.drawLine(0, i * this.tileSize, WIDTH, i * this.tileSize);
         }
 
         for (int i = 0; i < lightCycle.size(); i++)
@@ -76,35 +103,53 @@ public class Window extends JPanel implements Runnable {
 
 //this method is run continuously through the run() method below
     public void update() {
-        System.out.println("Testing");
+
         if(lightCycle.size() == 0) {
             p = new Player(xLocation, yLocation, 20);
             lightCycle.add(p);
+
 
         }
 
 
         updates++;
 
+        try{
+            thread.sleep(100);
+        }catch (InterruptedException e){
 
-        if(updates > 90000) {
-            if(up) yLocation--;
-            if(down) yLocation++;
-            if(left) xLocation--;
-            if(right) xLocation++;
-            updates = 0;
+        }
 
-            p = new Player(xLocation, yLocation, 20);
-            lightCycle.add(p);
+        if(up) yLocation--;
+        if(down) yLocation++;
+        if(left) xLocation--;
+        if(right) xLocation++;
 
-            if (lightCycle.size() > playerSize) {
-                lightCycle.remove(0);
+        try{
+            // check if tile was already walked upon
+            if( this.getTile( currentX, currentY) == 1){
+                System.out.println("you died by your tail");
+            }else {
+                // make tile walked on
+                this.setTile( currentX, yLocation, 1);
             }
+
+        }catch (java.lang.ArrayIndexOutOfBoundsException exception){
+            System.out.println("you died off the map");
+        }
+
+        updates = 0;
+
+        p = new Player(xLocation, yLocation, 20);
+        lightCycle.add(p);
+
+        if (lightCycle.size() > playerSize) {
+            lightCycle.remove(0);
         }
     }
 
 
-// default operation, gets run when thread.start() is initiated
+    // default operation, gets run when thread.start() is initiated
     public void run() {
         while (running) {
 
