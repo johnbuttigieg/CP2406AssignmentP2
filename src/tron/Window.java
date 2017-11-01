@@ -15,7 +15,7 @@ public class Window extends JPanel implements Runnable {
     private Player p;
     private ArrayList<Player> lightCycle;
     private int xLocation = 20, yLocation = 20;
-    private int playerSize = 5;
+    private int playerSize = 1;
 
 
     private boolean right = true, left = false, up = false, down = false;
@@ -27,12 +27,13 @@ public class Window extends JPanel implements Runnable {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         lightCycle = new ArrayList<Player>();
 
+        //leads to start() method to begin the thread to begin the game
         start();
 
     }
 
 
-
+//Starts the thread
     public void start() {
         running = true;
         thread = new Thread(this, "Thread Start");
@@ -44,8 +45,10 @@ public class Window extends JPanel implements Runnable {
     }
 
 
-// inbuilt into JPanel to change graphics of the JPANEL
+// inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
     public void paint(Graphics g) {
+        g.clearRect(0, 0, WIDTH, HEIGHT);
+
         g.setColor(Color.black);
         for (int i = 0; i < WIDTH / 20; i++) {
             g.drawLine(i * 20, 0, i * 20, HEIGHT);
@@ -64,7 +67,7 @@ public class Window extends JPanel implements Runnable {
 
 
 
-
+//this method is run continuously through the run() method below
     public void update() {
         System.out.println("Testing");
         if(lightCycle.size() == 0) {
@@ -76,17 +79,25 @@ public class Window extends JPanel implements Runnable {
 
         updates++;
 
-        if(updates > 30000) {
+
+        if(updates > 90000) {
             if(up) yLocation--;
             if(down) yLocation++;
             if(left) xLocation--;
             if(right) xLocation++;
             updates = 0;
 
-            
+            p = new Player(xLocation, yLocation, 20);
+            lightCycle.add(p);
+
+            if (lightCycle.size() > playerSize) {
+                lightCycle.remove(0);
+            }
         }
     }
 
+
+// default operation, gets run when thread.start() is initiated
     public void run() {
         while (running) {
 
