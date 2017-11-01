@@ -19,7 +19,7 @@ public class Player {
         g.setColor(Color.white);
         g.fillRect(xLocation * width, yLocation * height , width, height);
         g.setColor(Color.blue);
-        g.fillRect(xLocation * width - 5, yLocation * height - 5, width, height);
+        g.fillRect(xLocation * width + 2,yLocation * height + 2, width , height);
     }
 
 

@@ -18,6 +18,11 @@ public class Window extends JPanel implements Runnable {
     private int playerSize = 5;
 
 
+    private boolean right = true, left = false, up = false, down = false;
+
+    private int updates = 0;
+
+
     public Window() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         lightCycle = new ArrayList<Player>();
@@ -66,6 +71,19 @@ public class Window extends JPanel implements Runnable {
             p = new Player(xLocation, yLocation, 20);
             lightCycle.add(p);
 
+        }
+
+
+        updates++;
+
+        if(updates > 30000) {
+            if(up) yLocation--;
+            if(down) yLocation++;
+            if(left) xLocation--;
+            if(right) xLocation++;
+            updates = 0;
+
+            
         }
     }
 
