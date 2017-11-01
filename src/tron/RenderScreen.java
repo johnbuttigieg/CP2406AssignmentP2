@@ -8,15 +8,14 @@ import javax.swing.JPanel;
 public class RenderScreen extends JPanel {
 
 
-        public static int panelColor = 0;
+        public static Color black = new Color(350000);
 
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(new Color(panelColor));
+        g.setColor(Color.black);
         g.fillRect(0, 0, 800, 700);
-        panelColor++;
 
         System.out.println("testing");
 
