@@ -1,36 +1,43 @@
 package tron;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Player {
 
-    private int xLocation, yLocation, width, height;
+    public boolean active = false;
 
-    public Player(int xLocation, int yLocation, int blockSize) {
-        width = blockSize;
-        height = blockSize;
+    protected int keyPressed = KeyEvent.VK_RIGHT;
 
-        this.xLocation = xLocation;
-        this.yLocation = yLocation;
-
+    public int getKeyPressed(){
+        return this.keyPressed;
     }
 
-    public void draw(Graphics g) {
-        g.setColor(Color.white);
-        g.fillRect(xLocation * width, yLocation * height , width, height);
-        g.setColor(Color.blue);
-        g.fillRect(xLocation * width + 2,yLocation * height + 2, width , height);
+    public void setKeyPressed(int keyValue){
+        this.keyPressed = keyValue;
     }
 
+    protected Color color1 = Color.blue;
 
-    public void update() {
+    public Color getColor1()
+    {
+        return this.color1;
+    }
+
+    protected Color color2 = Color.cyan;
+
+    public Color getColor2()
+    {
+        return this.color2;
+    }
+
+    public int
+            currentX = 12,
+            currentY = 10;
+
+
+    public Player() {
 
 
     }
-
-
-
-
-
-
 }
