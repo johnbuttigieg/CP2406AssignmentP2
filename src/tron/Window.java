@@ -22,7 +22,7 @@ public class Window extends JPanel implements Runnable {
 
 
 //Changing these variables will change the amount of tiles on the map.
-    protected int tileNumX = 100,
+    protected int tileNumX = 50,
                   tileNumY = 50;
 
 //the array registeres if the tiles have been covered by a light cycle.
@@ -47,9 +47,10 @@ public class Window extends JPanel implements Runnable {
     protected int miliSecs = 100;
 
     protected int playersCount = 0;
-    protected int myPlayerId = 6;
+    protected int myPlayerId = 2;
 
     protected Player[] players = new Player[9];
+    protected Player2[] players2 = new Player2[9];
     protected Color[] colors = new Color[9];
     ArrayList<String> playersID = new ArrayList<String>();
 
@@ -64,7 +65,7 @@ public class Window extends JPanel implements Runnable {
         setFocusable(true);
         this.keyInput = new KeyInput();
         addKeyListener(keyInput);
-        this.keyInput.wnd = this;
+        this.keyInput.window = this;
 
 
         playersID.add(0, "Test");
@@ -94,7 +95,24 @@ public class Window extends JPanel implements Runnable {
                 this.players[playerId].color2 = this.colors[playerId - 1];
         }
 
+
+        for(int playerId2 = 0; playerId2 < 9; playerId2++){
+            this.players2[playerId2] = new Player2();
+            this.players2[playerId2].color1 = this.colors[playerId2];
+            if(playerId2 != 0)
+                this.players2[playerId2].color2 = this.colors[playerId2 - 1];
+        }
+
+
+
+
+
+
         this.players[this.myPlayerId].active = true;
+
+        this.players2[this.myPlayerId].active = true;
+
+
 
 
         this.p = new Player();
@@ -158,6 +176,10 @@ public class Window extends JPanel implements Runnable {
                         Color playerColor = this.players[playerId].getColor1();
                         graphics.setColor(playerColor);
                         graphics.fillRect(tileX * this.tileSize, tileY * this.tileSize, tileSize, tileSize);
+
+                        Color playerColor2 = this.players2[playerId].getColor1();
+                        graphics.setColor(playerColor2);
+                        graphics.fillRect(tileX * this.tileSize, tileY * this.tileSize, tileSize, tileSize);
                     }
                 }
             }
@@ -169,6 +191,17 @@ public class Window extends JPanel implements Runnable {
                 graphics.fillRect(player.currentX * this.tileSize, player.currentY * this.tileSize, tileSize, tileSize);
             }
         }
+
+        for (int playerId = 1; playerId < 9; playerId++) {
+            Player2 player2 = this.players2[playerId];
+            if( player2.active){
+                graphics.setColor(player2.getColor2());
+                graphics.fillRect(player2.currentX * this.tileSize, player2.currentY * this.tileSize, tileSize, tileSize);
+            }
+        }
+
+
+
         this.paintGrids(graphics);
     }
 
@@ -192,58 +225,132 @@ public class Window extends JPanel implements Runnable {
         for (int playerId = 1; playerId < 9; playerId++) {
             Player player = this.players[playerId];
 
-            if( ! player.active)
+            if (!player.active)
                 continue;
 
-            if( player.getKeyPressed() == KeyEvent.VK_UP){
+            if (player.getKeyPressed() == KeyEvent.VK_UP) {
                 player.currentY--;
             }
-            if( player.getKeyPressed() == KeyEvent.VK_DOWN){
+            if (player.getKeyPressed() == KeyEvent.VK_DOWN) {
                 player.currentY++;
             }
-            if( player.getKeyPressed() == KeyEvent.VK_LEFT){
+            if (player.getKeyPressed() == KeyEvent.VK_LEFT) {
                 player.currentX--;
             }
-            if( player.getKeyPressed() == KeyEvent.VK_RIGHT){
+            if (player.getKeyPressed() == KeyEvent.VK_RIGHT) {
                 player.currentX++;
             }
 
-            if( player.currentX >= this.tileNumX){
+            if (player.currentX >= this.tileNumX) {
                 player.currentX--;
             }
-            if( player.currentX < 0){
+            if (player.currentX < 0) {
                 player.currentX++;
             }
-            if( player.currentY >= this.tileNumY){
+            if (player.currentY >= this.tileNumY) {
                 player.currentY--;
             }
-            if( player.currentY < 0){
+            if (player.currentY < 0) {
                 player.currentY++;
             }
+
+
+
             System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
 
-            try{
-                int tile = this.getTile( player.currentX, player.currentY);
-                System.out.printf("\nOUCH(%d)\n",tile);
-                // check if tile was already walked upon
-                if( (tile & playerId) == playerId){
-                    System.out.println("Light cycle has been touched! ouch!");
-                }else {
-                    // make tile walked on
-                    this.setTile( player.currentX, player.currentY, tile | playerId);
-                    System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
+                try {
+                    int tile = this.getTile(player.currentX, player.currentY);
+                    System.out.printf("\nCoordanates(%d)\n", tile);
+                    // check if tile was already walked upon
+                    if ((tile & playerId) == playerId) {
+                        System.out.println("OUCH!!!! Light cycle has been touched!");
+                    } else {
+                        // make tile walked on
+                        this.setTile(player.currentX, player.currentY, tile | playerId);
+                        System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
+                    }
+
+                } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
+                    System.out.println("OUT OF BOUNDS!");
                 }
 
-            }catch (java.lang.ArrayIndexOutOfBoundsException exception){
-                System.out.println("OUT OF BOUUNDS!");
+        }
+
+
+            //testing Player2 class
+            for (int playerId2 = 1; playerId2 < 9; playerId2++) {
+                Player2 player2 = this.players2[playerId2];
+
+                if (!player2.active)
+                    continue;
+
+                if (player2.getKeyPressed() == KeyEvent.VK_DOWN) {
+                    player2.currentY--;
+                }
+                if (player2.getKeyPressed() == KeyEvent.VK_UP) {
+                    player2.currentY++;
+                }
+                if (player2.getKeyPressed() == KeyEvent.VK_LEFT) {
+                    player2.currentX--;
+                }
+                if (player2.getKeyPressed() == KeyEvent.VK_RIGHT) {
+                    player2.currentX++;
+                }
+
+                if (player2.currentX >= this.tileNumX) {
+                    player2.currentX--;
+                }
+                if (player2.currentX < 0) {
+                    player2.currentX++;
+                }
+                if (player2.currentY >= this.tileNumY) {
+                    player2.currentY--;
+                }
+                if (player2.currentY < 0) {
+                    player2.currentY++;
+                }
+
+                System.out.printf("(%d,%d)\n", player2.currentX, player2.currentY);
+
+                try {
+                    int tile = this.getTile(player2.currentX, player2.currentY);
+                    System.out.printf("\nCoordanates(%d)\n", tile);
+                    // check if tile was already walked upon
+                    if ((tile & playerId2) == playerId2) {
+                        System.out.println("OUCH!!!! Light cycle has been touched!");
+                    } else {
+                        // make tile walked on
+                        this.setTile(player2.currentX, player2.currentY, tile | playerId2);
+                        System.out.printf("(%d,%d)\n", player2.currentX, player2.currentY);
+                    }
+
+                } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
+                    System.out.println("OUT OF BOUNDS!");
+                }
+
+
+
+
+
+
+
             }
-        }
 
-        try{
-            Thread.sleep(this.miliSecs);
-        }catch (InterruptedException e){
 
-        }
+
+
+
+
+
+
+
+
+
+            try {
+                Thread.sleep(this.miliSecs);
+            } catch (InterruptedException e) {
+
+            }
     }
 
 
@@ -259,7 +366,7 @@ public class Window extends JPanel implements Runnable {
 
     protected class KeyInput implements KeyListener {
 
-        public Window wnd;
+        public Window window;
 
 
         @Override
@@ -271,9 +378,11 @@ public class Window extends JPanel implements Runnable {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
 
-            this.wnd.players[this.wnd.myPlayerId].setKeyPressed(key);
+            this.window.players[this.window.myPlayerId].setKeyPressed(key);
 
+            this.window.players2[this.window.myPlayerId].setKeyPressed(key);
 
+            /*
             if (key == KeyEvent.VK_RIGHT && !left) {
                 up = false;
                 down = false;
@@ -300,7 +409,9 @@ public class Window extends JPanel implements Runnable {
                 left = false;
 
             }
+            */
         }
+
 
         @Override
         public void keyReleased(KeyEvent e) {
