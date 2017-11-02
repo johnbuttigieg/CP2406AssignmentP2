@@ -6,6 +6,11 @@ import java.awt.*;
 
 public class TronFrame extends JFrame {
 
+    public static void main(String[] args) {
+        new TronFrame();
+    }
+
+
     public TronFrame() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,10 +36,7 @@ public class TronFrame extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        new TronFrame();
 
-    }
 
 
 

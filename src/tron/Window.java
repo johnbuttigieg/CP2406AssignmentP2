@@ -6,66 +6,124 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+
 public class Window extends JPanel implements Runnable {
+
+    boolean DEBUG_MODE = true;
 
 
     private boolean running = false;
     private Thread thread;
 
-
-    public static final int WIDTH = 500, HEIGHT = 500;
-    private int tileSize = 20;
     private Player p;
+
     private ArrayList<Player> lightCycle;
-    private int xLocation = 10, yLocation = 10;
     private int playerSize = 100000;
 
-    private int tileNumX = 20;
-    private int tileNumY = 20;
-    private int currentX = 0;
-    private int currentY = 0;
-    private int tiles[];
 
-    private KeyInput key;
+//Changing these variables will change the amount of tiles on the map.
+    protected int tileNumX = 100,
+                  tileNumY = 50;
+
+//the array registeres if the tiles have been covered by a light cycle.
+    protected int tiles[];
+
+// Changing the variable changes the tile size!
+    protected int tileSize = 10;
+
+
+    //Unused code only was used for testing purposes
+    protected int boardSizeX = 0,
+                  boardSizeY = 0;
+
+    private KeyInput keyInput;
 
     private boolean right = true, left = false, up = false, down = false;
 
-    private int updates = 0;
+    private boolean graphicsReady = false;
+    private Graphics graphics;
+
+    //changing this variable changes the speed of the gameplay. 100milliseconds is 10frames per second
+    protected int miliSecs = 100;
+
+    protected int playersCount = 0;
+    protected int myPlayerId = 6;
+
+    protected Player[] players = new Player[9];
+    protected Color[] colors = new Color[9];
+    ArrayList<String> playersID = new ArrayList<String>();
+
+
 
 
     public Window() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+        this.boardSizeX = this.tileNumX * this.tileSize;
+        this.boardSizeY = this.tileNumY * this.tileSize;
+        setPreferredSize(new Dimension(this.boardSizeX, this.boardSizeY));
         setFocusable(true);
-        key = new KeyInput();
-        addKeyListener(key);
+        this.keyInput = new KeyInput();
+        addKeyListener(keyInput);
+        this.keyInput.wnd = this;
 
-        lightCycle = new ArrayList<Player>();
 
-        this.tiles = new int[this.tileNumX * this.tileNumY];
+        playersID.add(0, "Test");
+        playersID.add("2");
+        playersID.add("3");
+        playersID.add("4");
+        playersID.add("5");
+        playersID.add("6");
+        playersID.add("7");
+        playersID.add("8");
+
+
+        this.colors[0] = Color.black;
+        this.colors[1] = Color.blue;
+        this.colors[2] = Color.red;
+        this.colors[3] = Color.green;
+        this.colors[4] = Color.yellow;
+        this.colors[5] = Color.cyan;
+        this.colors[6] = Color.magenta;
+        this.colors[7] = Color.pink;
+        this.colors[8] = Color.orange;
+
+        for(int playerId = 0; playerId < 9; playerId++){
+            this.players[playerId] = new Player();
+            this.players[playerId].color1 = this.colors[playerId];
+            if(playerId != 0)
+                this.players[playerId].color2 = this.colors[playerId - 1];
+        }
+
+        this.players[this.myPlayerId].active = true;
+
+
+        this.p = new Player();
+
+        int totalNumTiles = this.tileNumX * this.tileNumY;
+        this.tiles = new int[totalNumTiles];
+
+        if( this.DEBUG_MODE) {
+            System.out.printf("\nNumber of tiles: %d\n", this.tiles.length);
+            for(int i = 0; i < totalNumTiles; i++){
+                System.out.printf("\nTiles[%d]: %d\n", i, this.tiles[i]);
+            }
+        }
+
 
         //leads to start() method to begin the thread to begin the game
         start();
 
     }
 
-    /**
-     * @param x
-     * @param y
-     * @return int
-     */
+
     public int getTile(int x, int y) {
-        return this.tiles[(y * x) + x];
+        return this.tiles[this.tileNumX * y + x];
     }
 
-    /**
-     * @param x
-     * @param y
-     * @param value
-     */
+
     public void setTile(int x, int y, int value) {
-        this.tiles[(y * x) + x] = value;
+        this.tiles[this.tileNumX * y + x] = value;
     }
-
 
 //Starts the thread
     public void start() {
@@ -78,73 +136,113 @@ public class Window extends JPanel implements Runnable {
 
     }
 
-
 // inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
-    public void paint(Graphics g) {
-        g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        g.setColor(Color.black);
-        for (int i = 0; i < WIDTH / this.tileSize; i++) {
-            g.drawLine(i * this.tileSize, 0, i * this.tileSize, HEIGHT);
+    public void paint(Graphics graphics) {
+
+        graphics.clearRect(0, 0, this.boardSizeX, boardSizeY);
+
+        // draw borders
+        graphics.setColor(Color.black);
+        graphics.drawLine(0, 0, this.boardSizeX - 1, 0);
+        graphics.drawLine(0, 0, 0, this.boardSizeY - 1);
+        graphics.drawLine(this.boardSizeX - 1, 0, this.boardSizeX - 1, this.boardSizeY - 1);
+        graphics.drawLine(0, this.boardSizeY - 1, this.boardSizeX - 1, this.boardSizeY - 1);
+
+        for (int tileX = 0; tileX < this.tileNumX; tileX++) {
+            for (int tileY = 0; tileY < this.tileNumY; tileY++) {
+                for (int playerId = 1; playerId < 9; playerId++) {
+                    int tile = this.getTile(tileX, tileY);
+                    if( (tile & playerId) == playerId){
+
+                        Color playerColor = this.players[playerId].getColor1();
+                        graphics.setColor(playerColor);
+                        graphics.fillRect(tileX * this.tileSize, tileY * this.tileSize, tileSize, tileSize);
+                    }
+                }
+            }
         }
-
-        for (int i = 0; i < HEIGHT / this.tileSize; i++) {
-            g.drawLine(0, i * this.tileSize, WIDTH, i * this.tileSize);
+        for (int playerId = 1; playerId < 9; playerId++) {
+            Player player = this.players[playerId];
+            if( player.active){
+                graphics.setColor(player.getColor2());
+                graphics.fillRect(player.currentX * this.tileSize, player.currentY * this.tileSize, tileSize, tileSize);
+            }
         }
-
-        for (int i = 0; i < lightCycle.size(); i++)
-        {
-            lightCycle.get(i).draw(g);
-        }
-
+        this.paintGrids(graphics);
     }
 
+    private void paintGrids(Graphics graphics)
+    {
+        graphics.setColor(Color.black);
+        // draw X grids
+        for (int tileX = 0; tileX < this.tileNumX; tileX++) {
+            graphics.drawLine(tileX * this.tileSize - 1, 0, tileX * this.tileSize, this.boardSizeY - 1);
+        }
+        // draw Y grids
+        for (int tileY = 0; tileY < this.tileNumY; tileY++) {
+            graphics.drawLine(0, tileY * this.tileSize - 1, this.boardSizeX, tileY * this.tileSize - 1);
+        }
+    }
 
 
 //this method is run continuously through the run() method below
     public void update() {
 
-        if(lightCycle.size() == 0) {
-            p = new Player(xLocation, yLocation, 20);
-            lightCycle.add(p);
+        for (int playerId = 1; playerId < 9; playerId++) {
+            Player player = this.players[playerId];
 
+            if( ! player.active)
+                continue;
 
-        }
-
-
-        updates++;
-
-        try{
-            thread.sleep(100);
-        }catch (InterruptedException e){
-
-        }
-
-        if(up) yLocation--;
-        if(down) yLocation++;
-        if(left) xLocation--;
-        if(right) xLocation++;
-
-        try{
-            // check if tile was already walked upon
-            if( this.getTile( currentX, currentY) == 1){
-                System.out.println("you died by your tail");
-            }else {
-                // make tile walked on
-                this.setTile( currentX, yLocation, 1);
+            if( player.getKeyPressed() == KeyEvent.VK_UP){
+                player.currentY--;
+            }
+            if( player.getKeyPressed() == KeyEvent.VK_DOWN){
+                player.currentY++;
+            }
+            if( player.getKeyPressed() == KeyEvent.VK_LEFT){
+                player.currentX--;
+            }
+            if( player.getKeyPressed() == KeyEvent.VK_RIGHT){
+                player.currentX++;
             }
 
-        }catch (java.lang.ArrayIndexOutOfBoundsException exception){
-            System.out.println("you died off the map");
+            if( player.currentX >= this.tileNumX){
+                player.currentX--;
+            }
+            if( player.currentX < 0){
+                player.currentX++;
+            }
+            if( player.currentY >= this.tileNumY){
+                player.currentY--;
+            }
+            if( player.currentY < 0){
+                player.currentY++;
+            }
+            System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
+
+            try{
+                int tile = this.getTile( player.currentX, player.currentY);
+                System.out.printf("\nOUCH(%d)\n",tile);
+                // check if tile was already walked upon
+                if( (tile & playerId) == playerId){
+                    System.out.println("Light cycle has been touched! ouch!");
+                }else {
+                    // make tile walked on
+                    this.setTile( player.currentX, player.currentY, tile | playerId);
+                    System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
+                }
+
+            }catch (java.lang.ArrayIndexOutOfBoundsException exception){
+                System.out.println("OUT OF BOUUNDS!");
+            }
         }
 
-        updates = 0;
+        try{
+            Thread.sleep(this.miliSecs);
+        }catch (InterruptedException e){
 
-        p = new Player(xLocation, yLocation, 20);
-        lightCycle.add(p);
-
-        if (lightCycle.size() > playerSize) {
-            lightCycle.remove(0);
         }
     }
 
@@ -155,11 +253,13 @@ public class Window extends JPanel implements Runnable {
 
             repaint();
             update();
-    }
+        }
     }
 
 
-    private class KeyInput implements KeyListener {
+    protected class KeyInput implements KeyListener {
+
+        public Window wnd;
 
 
         @Override
@@ -171,12 +271,14 @@ public class Window extends JPanel implements Runnable {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
 
+            this.wnd.players[this.wnd.myPlayerId].setKeyPressed(key);
 
-                if (key == KeyEvent.VK_RIGHT && !left) {
-                    up = false;
-                    down = false;
-                    right = true;
-                }
+
+            if (key == KeyEvent.VK_RIGHT && !left) {
+                up = false;
+                down = false;
+                right = true;
+            }
 
 
             if (key == KeyEvent.VK_LEFT && !right) {
