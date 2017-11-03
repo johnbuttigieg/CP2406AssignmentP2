@@ -8,77 +8,71 @@ import java.awt.event.KeyListener;
 
 public class Window extends JPanel implements Runnable {
 
-    boolean DEBUG_MODE = true;
 
 
     private boolean running = false;
-    private Thread thread;
-
-    private Player p;
 
     //Changing these variables will change the amount of tiles on the map.
-    protected int tileNumX = 50,
-                  tileNumY = 50;
+    private int tileNumX = 50, tileNumY = 50;
 
     //the array registeres if the tiles have been covered by a light cycle.
-    protected int tiles[];
+    private int tiles[];
 
     // Changing the variable changes the tile size!
-    protected int tileSize = 10;
+    private int tileSize = 10;
 
 
     //Unused code only was used for testing purposes
-    protected int boardSizeX = 0,
-                  boardSizeY = 0;
-
-    private KeyInput keyInput;
+    private int boardSizeX = 0, boardSizeY = 0;
 
     //changing this variable changes the speed of the gameplay. 100milliseconds is 10frames per second
-    protected int miliSecs = 100;
 
-    protected int myPlayerId = 2;
 
-    protected Player[] players = new Player[9];
-    protected Player2[] players2 = new Player2[9];
-    protected Color[] colors = new Color[9];
+    private int myPlayerId = 2;
 
+    private Player[] players = new Player[9];
+    private Player2[] players2 = new Player2[9];
 
 
 
-    public Window() {
+
+    Window() {
 
         this.boardSizeX = this.tileNumX * this.tileSize;
         this.boardSizeY = this.tileNumY * this.tileSize;
         setPreferredSize(new Dimension(this.boardSizeX, this.boardSizeY));
         setFocusable(true);
-        this.keyInput = new KeyInput();
+        KeyInput keyInput = new KeyInput();
         addKeyListener(keyInput);
-        this.keyInput.window = this;
+        keyInput.window = this;
 
         //Changes the player into a specific colour. Changing myPlayerID changes the colour
-        this.colors[0] = Color.black;
-        this.colors[1] = Color.blue;
-        this.colors[2] = Color.red;
-        this.colors[3] = Color.green;
-        this.colors[4] = Color.yellow;
-        this.colors[5] = Color.cyan;
-        this.colors[6] = Color.magenta;
-        this.colors[7] = Color.pink;
-        this.colors[8] = Color.orange;
+
+        Color[] colors = {
+                Color.black,
+                Color.blue,
+                Color.red,
+                Color.green,
+                Color.yellow,
+                Color.cyan,
+                Color.magenta,
+                Color.pink,
+                Color.orange};
+
 
         for(int playerId = 0; playerId < 9; playerId++){
             this.players[playerId] = new Player();
-            this.players[playerId].color1 = this.colors[playerId];
+            this.players[playerId].color1 = colors[playerId];
             if(playerId != 0)
-                this.players[playerId].color2 = this.colors[playerId - 1];
+                this.players[playerId].color2 = colors[playerId - 1];
         }
 
 
         for(int playerId2 = 0; playerId2 < 9; playerId2++){
             this.players2[playerId2] = new Player2();
-            this.players2[playerId2].color1 = this.colors[playerId2];
+            this.players2[playerId2].color1 = colors[playerId2];
             if(playerId2 != 0)
-                this.players2[playerId2].color2 = this.colors[playerId2 - 1];
+                this.players2[playerId2].color2 = colors[playerId2 - 1];
         }
 
 
@@ -91,20 +85,16 @@ public class Window extends JPanel implements Runnable {
         this.players2[this.myPlayerId].active = true;
 
 
-
-
-        this.p = new Player();
-
         int totalNumTiles = this.tileNumX * this.tileNumY;
         this.tiles = new int[totalNumTiles];
 
         //Testing the number of tiles
-        if( this.DEBUG_MODE) {
-            System.out.printf("\nNumber of tiles: %d\n", this.tiles.length);
-            for(int i = 0; i < totalNumTiles; i++){
-                System.out.printf("\nTiles[%d]: %d\n", i, this.tiles[i]);
+        System.out.printf("\nNumber of tiles: %d\n", this.tiles.length);
+        for(int i = 0; i < totalNumTiles; i++){
+            System.out.printf("\nTiles[%d]: %d\n", i, this.tiles[i]);
             }
-        }
+
+
 
 
         //leads to start() method to begin the thread to begin the game
@@ -113,26 +103,23 @@ public class Window extends JPanel implements Runnable {
     }
 
 
-    public int getTile(int x, int y) {
+    private int getTile(int x, int y) {
         return this.tiles[this.tileNumX * y + x];
     }
 
 
-    public void setTile(int x, int y, int value) {
+    private void setTile(int x, int y, int value) {
         this.tiles[this.tileNumX * y + x] = value;
     }
 
     //Starts the thread
-    public void start() {
+    private void start() {
+        Thread thread;
         running = true;
         thread = new Thread(this, "Thread Start");
         thread.start();
     }
 
-    //Stops the thread
-    public void stop() {
-
-    }
 
     // inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
     public void paint(Graphics graphics) {
@@ -201,8 +188,7 @@ public class Window extends JPanel implements Runnable {
 
 
     //this method is run continuously through the run() method below
-    public void update() {
-
+    private void update() {
 
         //PLAYER 1 CONTROLS
         for (int playerId = 1; playerId < 9; playerId++) {
@@ -246,7 +232,6 @@ public class Window extends JPanel implements Runnable {
                     // check if tile was already walked upon
                     if ((tile & playerId) == playerId) {
                         System.out.println("OUCH!!!! Light cycle has been touched! Game Over!");
-                        thread.stop();
                     } else {
                         // make tile walked on
                         this.setTile(player.currentX, player.currentY, tile | playerId);
@@ -302,7 +287,6 @@ public class Window extends JPanel implements Runnable {
                     // check if tile was already walked upon
                     if ((tile & playerId2) == playerId2) {
                         System.out.println("OUCH!!!! Light cycle has been touched!");
-                        thread.stop();
                     } else {
                         // make tile walked on
                         this.setTile(player2.currentX, player2.currentY, tile | playerId2);
@@ -319,9 +303,9 @@ public class Window extends JPanel implements Runnable {
 
             //This controls the frames per second through Thread.sleep
             try {
-                Thread.sleep(this.miliSecs);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
-
+                System.out.println("Interrupted Exception CAUGHT!");
             }
     }
 
@@ -338,7 +322,7 @@ public class Window extends JPanel implements Runnable {
 
     protected class KeyInput implements KeyListener {
 
-        public Window window;
+        private Window window;
 
 
         @Override //Unused Function

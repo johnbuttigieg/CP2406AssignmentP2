@@ -11,9 +11,9 @@ public class Main extends JFrame {
     }
 
 
-    public Main() {
+    private Main() {
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("John Buttigieg's 2D Tron Legacy Multiplayer Game");
 
@@ -23,7 +23,7 @@ public class Main extends JFrame {
     }
 
 
-    public void initalise() {
+    private void initalise() {
         setLayout(new GridLayout(1, 1, 0, 0));
 
         Window window = new Window();
