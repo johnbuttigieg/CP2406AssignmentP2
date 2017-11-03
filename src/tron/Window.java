@@ -98,6 +98,7 @@ public class Window extends JPanel implements Runnable {
         int totalNumTiles = this.tileNumX * this.tileNumY;
         this.tiles = new int[totalNumTiles];
 
+        //Testing the number of tiles
         if( this.DEBUG_MODE) {
             System.out.printf("\nNumber of tiles: %d\n", this.tiles.length);
             for(int i = 0; i < totalNumTiles; i++){
@@ -236,7 +237,7 @@ public class Window extends JPanel implements Runnable {
                 player.currentY++;
             }
 
-            //Testing Print Statement
+            //CODE TESTING
             System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
 
                 try {
@@ -292,6 +293,7 @@ public class Window extends JPanel implements Runnable {
                     player2.currentY++;
                 }
 
+                //CODE TESTING:
                 System.out.printf("(%d,%d)\n", player2.currentX, player2.currentY);
 
                 try {

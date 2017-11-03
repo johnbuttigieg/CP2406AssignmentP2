@@ -7,6 +7,7 @@ public class Player2 {
 
     public boolean active = false;
 
+    //Initial Direction of the player
     protected int keyPressed = KeyEvent.VK_RIGHT;
 
     public int getKeyPressed(){
@@ -31,6 +32,7 @@ public class Player2 {
         return this.color2;
     }
 
+    //Initial Location of the Player2
     public int
             currentX = 2,
             currentY = 2;
