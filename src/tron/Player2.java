@@ -7,7 +7,7 @@ public class Player2 {
 
     public boolean active = false;
 
-    protected int keyPressed;
+    protected int keyPressed = KeyEvent.VK_RIGHT;
 
     public int getKeyPressed(){
         return this.keyPressed;

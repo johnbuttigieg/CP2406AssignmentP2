@@ -4,14 +4,14 @@ package tron;
 import javax.swing.*;
 import java.awt.*;
 
-public class TronFrame extends JFrame {
+public class Main extends JFrame {
 
     public static void main(String[] args) {
-        new TronFrame();
+        new Main();
     }
 
 
-    public TronFrame() {
+    public Main() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);

@@ -184,6 +184,7 @@ public class Window extends JPanel implements Runnable {
                 }
             }
         }
+        //FOR PLAYER 1: Fills the Rectangle with the specific player colour based on myPlayerID variable.
         for (int playerId = 1; playerId < 9; playerId++) {
             Player player = this.players[playerId];
             if( player.active){
@@ -192,6 +193,7 @@ public class Window extends JPanel implements Runnable {
             }
         }
 
+        //FOR PLAYER 2: Fills the Rectangle with the specific player colour based on myPlayerID variable.
         for (int playerId = 1; playerId < 9; playerId++) {
             Player2 player2 = this.players2[playerId];
             if( player2.active){
@@ -263,7 +265,7 @@ public class Window extends JPanel implements Runnable {
                     System.out.printf("\nCoordanates(%d)\n", tile);
                     // check if tile was already walked upon
                     if ((tile & playerId) == playerId) {
-                        System.out.println("OUCH!!!! Light cycle has been touched!");
+                        System.out.println("OUCH!!!! Light cycle has been touched! Game Over!");
                     } else {
                         // make tile walked on
                         this.setTile(player.currentX, player.currentY, tile | playerId);
@@ -284,10 +286,10 @@ public class Window extends JPanel implements Runnable {
                 if (!player2.active)
                     continue;
 
-                if (player2.getKeyPressed() == KeyEvent.VK_DOWN) {
+                if (player2.getKeyPressed() == KeyEvent.VK_UP) {
                     player2.currentY--;
                 }
-                if (player2.getKeyPressed() == KeyEvent.VK_UP) {
+                if (player2.getKeyPressed() == KeyEvent.VK_DOWN) {
                     player2.currentY++;
                 }
                 if (player2.getKeyPressed() == KeyEvent.VK_LEFT) {
@@ -318,6 +320,7 @@ public class Window extends JPanel implements Runnable {
                     // check if tile was already walked upon
                     if ((tile & playerId2) == playerId2) {
                         System.out.println("OUCH!!!! Light cycle has been touched!");
+                        thread.stop();
                     } else {
                         // make tile walked on
                         this.setTile(player2.currentX, player2.currentY, tile | playerId2);
