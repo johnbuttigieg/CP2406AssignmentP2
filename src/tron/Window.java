@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
 
 public class Window extends JPanel implements Runnable {
@@ -17,18 +16,14 @@ public class Window extends JPanel implements Runnable {
 
     private Player p;
 
-    private ArrayList<Player> lightCycle;
-    private int playerSize = 100000;
-
-
-//Changing these variables will change the amount of tiles on the map.
+    //Changing these variables will change the amount of tiles on the map.
     protected int tileNumX = 50,
                   tileNumY = 50;
 
-//the array registeres if the tiles have been covered by a light cycle.
+    //the array registeres if the tiles have been covered by a light cycle.
     protected int tiles[];
 
-// Changing the variable changes the tile size!
+    // Changing the variable changes the tile size!
     protected int tileSize = 10;
 
 
@@ -38,15 +33,9 @@ public class Window extends JPanel implements Runnable {
 
     private KeyInput keyInput;
 
-    private boolean right = true, left = false, up = false, down = false;
-
-    private boolean graphicsReady = false;
-    private Graphics graphics;
-
     //changing this variable changes the speed of the gameplay. 100milliseconds is 10frames per second
     protected int miliSecs = 100;
 
-    protected int playersCount = 0;
     protected int myPlayerId = 2;
 
     protected Player[] players = new Player[9];
@@ -66,7 +55,7 @@ public class Window extends JPanel implements Runnable {
         addKeyListener(keyInput);
         this.keyInput.window = this;
 
-
+        //Changes the player into a specific colour. Changing myPlayerID changes the colour
         this.colors[0] = Color.black;
         this.colors[1] = Color.blue;
         this.colors[2] = Color.red;
@@ -132,18 +121,19 @@ public class Window extends JPanel implements Runnable {
         this.tiles[this.tileNumX * y + x] = value;
     }
 
-//Starts the thread
+    //Starts the thread
     public void start() {
         running = true;
         thread = new Thread(this, "Thread Start");
         thread.start();
     }
 
+    //Stops the thread
     public void stop() {
 
     }
 
-// inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
+    // inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
     public void paint(Graphics graphics) {
 
         graphics.clearRect(0, 0, this.boardSizeX, boardSizeY);
@@ -209,9 +199,11 @@ public class Window extends JPanel implements Runnable {
     }
 
 
-//this method is run continuously through the run() method below
+    //this method is run continuously through the run() method below
     public void update() {
 
+
+        //PLAYER 1 CONTROLS
         for (int playerId = 1; playerId < 9; playerId++) {
             Player player = this.players[playerId];
 
@@ -244,8 +236,7 @@ public class Window extends JPanel implements Runnable {
                 player.currentY++;
             }
 
-
-
+            //Testing Print Statement
             System.out.printf("(%d,%d)\n", player.currentX, player.currentY);
 
                 try {
@@ -268,7 +259,7 @@ public class Window extends JPanel implements Runnable {
         }
 
 
-            //testing Player2 class
+            //PLAYER 2 CONTROLS
             for (int playerId2 = 1; playerId2 < 9; playerId2++) {
                 Player2 player2 = this.players2[playerId2];
 
@@ -321,23 +312,10 @@ public class Window extends JPanel implements Runnable {
                 }
 
 
-
-
-
-
-
             }
 
 
-
-
-
-
-
-
-
-
-
+            //This controls the frames per second through Thread.sleep
             try {
                 Thread.sleep(this.miliSecs);
             } catch (InterruptedException e) {
@@ -346,7 +324,7 @@ public class Window extends JPanel implements Runnable {
     }
 
 
-    // default operation, gets run when thread.start() is initiated
+    // default operation, gets run when thread.start() is initiated. Continulously calls Paint(); and Update();
     public void run() {
         while (running) {
 
@@ -361,9 +339,8 @@ public class Window extends JPanel implements Runnable {
         public Window window;
 
 
-        @Override
+        @Override //Unused Function
         public void keyTyped(KeyEvent e) {
-
         }
 
         @Override
@@ -374,40 +351,11 @@ public class Window extends JPanel implements Runnable {
 
             this.window.players2[this.window.myPlayerId].setKeyPressed(key);
 
-            /*
-            if (key == KeyEvent.VK_RIGHT && !left) {
-                up = false;
-                down = false;
-                right = true;
-            }
-
-
-            if (key == KeyEvent.VK_LEFT && !right) {
-                up = false;
-                down = false;
-                left = true;
-            }
-
-            if (key == KeyEvent.VK_UP && !down) {
-                up = true;
-                right = false;
-                left = false;
-
-            }
-
-            if (key == KeyEvent.VK_DOWN && !up) {
-                down = true;
-                right = false;
-                left = false;
-
-            }
-            */
         }
 
 
-        @Override
+        @Override //Unused Function
         public void keyReleased(KeyEvent e) {
-
         }
     }
 
