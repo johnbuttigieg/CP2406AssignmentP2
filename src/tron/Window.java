@@ -52,7 +52,6 @@ public class Window extends JPanel implements Runnable {
     protected Player[] players = new Player[9];
     protected Player2[] players2 = new Player2[9];
     protected Color[] colors = new Color[9];
-    ArrayList<String> playersID = new ArrayList<String>();
 
 
 
@@ -66,16 +65,6 @@ public class Window extends JPanel implements Runnable {
         this.keyInput = new KeyInput();
         addKeyListener(keyInput);
         this.keyInput.window = this;
-
-
-        playersID.add(0, "Test");
-        playersID.add("2");
-        playersID.add("3");
-        playersID.add("4");
-        playersID.add("5");
-        playersID.add("6");
-        playersID.add("7");
-        playersID.add("8");
 
 
         this.colors[0] = Color.black;
@@ -155,7 +144,6 @@ public class Window extends JPanel implements Runnable {
     }
 
 // inbuilt into JPanel to change graphics of the JPANEL and create the CELLS
-
     public void paint(Graphics graphics) {
 
         graphics.clearRect(0, 0, this.boardSizeX, boardSizeY);
@@ -266,6 +254,7 @@ public class Window extends JPanel implements Runnable {
                     // check if tile was already walked upon
                     if ((tile & playerId) == playerId) {
                         System.out.println("OUCH!!!! Light cycle has been touched! Game Over!");
+                        thread.stop();
                     } else {
                         // make tile walked on
                         this.setTile(player.currentX, player.currentY, tile | playerId);
